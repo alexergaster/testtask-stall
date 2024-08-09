@@ -3,19 +3,19 @@
     <div class="container">
 
       <div class="order-1">
-        <a class="navbar-brand" href="/">MyShop</a>
+        <a class="navbar-brand" href="/">Stall Shop</a>
       </div>
 
       <div class="collapse navbar-collapse order-2 justify-content-center" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Головна</a>
+            <a class="nav-link" aria-current="page" href="/">Головна</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/products">Товари</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/category">Категорії</a>
+            <a class="nav-link" href="/categories">Категорії</a>
           </li>
         </ul>
       </div>

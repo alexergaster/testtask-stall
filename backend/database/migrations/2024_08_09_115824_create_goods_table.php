@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('goods', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->string('name');
+            $table->unsignedBigInteger('category_id');
+            $table->string("images");
+            $table->string('title');
+            $table->text('description');
+            $table->float('price');
+
+            $table->softDeletes();
         });
     }
 
