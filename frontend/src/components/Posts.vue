@@ -2,9 +2,9 @@
   <div>
     <h1>Posts</h1>
     <div v-if="posts.length">
+      {{ posts }}
       <div v-for="post in posts" :key="post.id">
         <h2>{{ post.name }}</h2>
-<!--        <p>{{ post.content }}</p>-->
       </div>
     </div>
     <div v-else>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from '../axios';
 
 export default {
   data() {
@@ -28,7 +28,7 @@ export default {
   methods: {
     async fetchPosts() {
       try {
-        const response = await axios.get('/api/posts');
+        const response = await axios.get('goods');
         this.posts = response.data;
       } catch (error) {
         console.error('Error fetching posts:', error);
