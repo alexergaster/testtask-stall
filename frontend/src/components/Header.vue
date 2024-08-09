@@ -21,7 +21,7 @@
       </div>
 
       <div class="order-3">
-        <a class="navbar-brand" href="#">Корзина</a>
+        <a class="navbar-brand" href="/shopping_cart">Корзина</a>
       </div>
 
     </div>

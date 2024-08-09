@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GoodsController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resources(['/products' => GoodsController::class, '/categories' => CategoryController::class]);
+Route::resources([
+    '/products' => GoodsController::class,
+    '/categories' => CategoryController::class,
+    '/users' => UserController::class,
+]);
 

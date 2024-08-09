@@ -6,7 +6,9 @@
         <h5 class="card-title">{{ product.title }}</h5>
         <p class="card-text text-primary">{{ product.price }} грн</p>
         <p v-if="product.category" class="card-text text-muted">Категорія: {{ product.category.name}}</p>
-        <button @click.stop="addToCart(product)" class="btn btn-primary mt-3">Купити</button>
+        <p v-if="isInCart" class="card-text text-danger">Кількість обрано: {{ product.quantity}}</p>
+        <button v-if="!isInCart"  @click.stop="addToCart(product)" class="btn btn-primary mt-3">Купити</button>
+        <button v-if="isInCart" @click.stop="removeWithCart(product)" class="btn btn-danger mt-3">Видалити</button>
       </div>
     </div>
   </div>
@@ -16,6 +18,10 @@
 export default {
   name: 'ProductCard',
   props: {
+    isInCart: {
+      type: Boolean,
+      default: false
+    },
     product: {
       type: Object,
       required: true
@@ -24,6 +30,9 @@ export default {
   methods: {
     goToProduct(id) {
       this.$emit('selectProduct', id);
+    },
+    removeWithCart(product) {
+      this.$emit('removeWithCart', product);
     },
     addToCart(product) {
       this.$emit('addToCart', product);

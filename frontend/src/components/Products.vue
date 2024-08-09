@@ -9,16 +9,13 @@
       </select>
     </div>
     <div v-if="products.length" class="row">
-
       <ProductCard
           v-for="product in sortedProducts"
           :key="product.id"
           :product="product"
           @selectProduct="goToProduct"
-          @addToCart="handleAddToCart"
+          @addToCart="handleAddToCart(product)"
       />
-
-
     </div>
     <div v-else>
       <p class="text-center">Немає доступних товарів</p>
@@ -69,7 +66,16 @@ export default {
       this.$router.push(`/products/${id}`);
     },
     handleAddToCart(product) {
-      console.log('Added to cart:', product);
+      let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+      if (cart[product.id]) {
+        cart[product.id].quantity++;
+      } else {
+        cart[product.id] = product;
+        cart[product.id].quantity = 1;
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
     }
   }
 };

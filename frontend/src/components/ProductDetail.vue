@@ -9,7 +9,7 @@
         <p class="lead">{{ product.description }}</p>
         <a :href="`/categories/${product.category.id}`" class="card-text text-muted">Категорія: {{ product.category.name }}</a>
         <p class="text-primary h4">{{ product.price }} грн</p>
-        <button @click="buyProduct" class="btn btn-success mt-3">Купити</button>
+        <button @click="handleAddToCart" class="btn btn-success mt-3">Купити</button>
       </div>
     </div>
     <div v-else>
@@ -41,8 +41,19 @@ export default {
         console.error('Error fetching goods:', error);
       }
     },
-    buyProduct() {
-      alert(`Ви купили ${this.product.title}`);
+    handleAddToCart() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+      if (cart[this.product.id]) {
+        cart[this.product.id].quantity++;
+      } else {
+        cart[this.product.id] = this.product;
+        cart[this.product.id].quantity = 1;
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      console.log(localStorage.getItem('cart'))
     }
   }
 }
