@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Goods;
+use Illuminate\Http\JsonResponse;
 
 class GoodsController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        dd(12);
+        return response()->json(Goods::all());
     }
 }
