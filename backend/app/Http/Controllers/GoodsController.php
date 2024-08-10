@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Goods;
 use Illuminate\Http\JsonResponse;
 
-class GoodsController extends Controller
+class GoodsController extends BaseController
 {
     public function index(): JsonResponse
     {

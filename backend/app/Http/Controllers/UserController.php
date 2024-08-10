@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     public function index(): JsonResponse
     {
@@ -24,15 +23,9 @@ class UserController extends Controller
     {
 
         $data = $request->validated();
+        $this->service->store($data);
 
-        $products = $data['productsId'];
-        unset($data['productsId']);
 
-        $user = User::firstOrCreate($data);
-
-        foreach ($products as $product) {
-            $user->orders()->attach($product['id'], ['quantity' => $product['quantity']]);
-        }
 
         return response()->json(["message" => 'Замовлення успішно оформленно'], 201);
     }
