@@ -11,7 +11,7 @@
           @removeWithCart="handleRemoveToCart(product.id)"
       />
     </div>
-    <div class="row justify-content-center mt-4">
+    <div class="row justify-content-center mt-4 mb-5">
       <button class="btn btn-success btn-lg" @click="checkout">
         Оформити замовлення
       </button>

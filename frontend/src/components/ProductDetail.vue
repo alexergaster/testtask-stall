@@ -9,7 +9,7 @@
         <p class="lead">{{ product.description }}</p>
         <a :href="`/categories/${product.category.id}`" class="card-text text-muted">Категорія: {{ product.category.name }}</a>
         <p class="text-primary h4">{{ product.price }} грн</p>
-        <button @click="handleAddToCart" class="btn btn-success mt-3">Купити</button>
+        <button @click="handleAddToCart" class="btn btn-primary mt-3">Купити</button>
       </div>
     </div>
     <div v-else>
