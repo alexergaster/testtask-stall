@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,15 +20,10 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(UserRequest $request): JsonResponse
     {
 
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'email' => 'required',
-            'productsId' => 'required|array',
-        ]);
+        $data = $request->validated();
 
         $products = $data['productsId'];
         unset($data['productsId']);
