@@ -39,17 +39,14 @@
       </div>
 
       <div class="form-group mt-3">
-        <label for="email">Ваші товари:</label>
+        <label for="products">Ваші товари:</label>
         <div v-for="product in products" :key="product.id">
-          <h5> {{ product.title }} - <span class="text-success">{{ product.price }} грн</span></h5>
+          <h5>{{ product.title }} - <span class="text-success">{{ product.price }} грн</span></h5>
         </div>
       </div>
-
-      <div class="form-group mt-3">
-        <label>Загальна сума:</label>
-        <h5 class="text-success">{{ sumPrice }} грн</h5>
+      <div class="form-group mt-3" v-if="message !== ''">
+        <p class="text-center border p-2 rounded">{{ message }}</p>
       </div>
-
       <button type="submit" class="btn btn-success btn-lg mt-4">
         Підтвердити замовлення
       </button>
@@ -57,78 +54,73 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import axios from '../axios';
 
-export default {
-  name: "Order",
+const name = ref('');
+const phone = ref('');
+const email = ref('');
+const nameError = ref('');
+const phoneError = ref('');
+const emailError = ref('');
+const products = ref(JSON.parse(localStorage.getItem('cart')) || []);
+let message = ref('');
 
-  data() {
-    return {
-      name: '',
-      phone: '',
-      email: '',
-      nameError: '',
-      phoneError: '',
-      emailError: '',
-      products: JSON.parse(localStorage.getItem('cart')),
-      sumPrice: 0,
+function validateForm() {
+  nameError.value = '';
+  phoneError.value = '';
+  emailError.value = '';
+
+  let isValid = true;
+
+  if (!name.value || name.value.length < 3) {
+    nameError.value = 'Ім’я повинно містити принаймні 3 символи';
+    isValid = false;
+  }
+
+  const phonePattern = /^\d{10,12}$/;
+  if (!phone.value || !phonePattern.test(phone.value)) {
+    phoneError.value = 'Введіть коректний номер телефону (10-12 цифр)';
+    isValid = false;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email.value || !emailPattern.test(email.value)) {
+    emailError.value = 'Введіть коректну електронну пошту';
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+async function submitOrder() {
+  message.value = '';
+  if (validateForm()) {
+    const data = {
+      name: name.value,
+      phone: phone.value,
+      email: email.value,
+      productsId: products.value,
     };
-  },
-  computed: {
-    sumPrice() {
-      return Object.values(this.products).reduce((sum, product) => {
-        return sum + (product.price * product.quantity);
-      }, 0);
-    }
-  },
-  methods: {
-    validateForm() {
-      this.nameError = '';
-      this.phoneError = '';
-      this.emailError = '';
 
-      let isValid = true;
-
-      if (!this.name || this.name.length < 3) {
-        this.nameError = 'Ім’я повинно містити принаймні 3 символи';
-        isValid = false;
-      }
-
-      const phonePattern = /^\d{10,12}$/;
-      if (!this.phone || !phonePattern.test(this.phone)) {
-        this.phoneError = 'Введіть коректний номер телефону (10-12 цифр)';
-        isValid = false;
-      }
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!this.email || !emailPattern.test(this.email)) {
-        this.emailError = 'Введіть коректну електронну пошту';
-        isValid = false;
-      }
-
-      return isValid;
-    },
-   async submitOrder() {
-      if (this.validateForm()) {
-        const data = {
-          name: this.name,
-          phone: this.phone,
-          email: this.email,
-          productsId: this.products
-        };
-        console.log(data)
-
-        axios.post('users', data)
-            .then(response => {
-              console.log('User created successfully:', response.data);
-            })
-            .catch(error => {
-              console.error('There was an error creating the user:', error);
-            });
-      }
+    try {
+      const response = await axios.post('users', data);
+      message.value = response.data.message;
+    } catch (error) {
+      message.value = 'При оформленні замовлення сталась поимлка';
+      console.error('There was an error creating the user:', error);
     }
   }
 }
-
 </script>
+
+<style scoped>
+.card-body {
+  text-align: center;
+}
+
+.btn {
+  width: 100%;
+}
+</style>

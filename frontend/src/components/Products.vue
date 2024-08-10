@@ -14,7 +14,7 @@
           :key="product.id"
           :product="product"
           @selectProduct="goToProduct"
-          @addToCart="handleAddToCart(product)"
+          @addToCart="handleAddToCart"
       />
     </div>
     <div v-else>
@@ -23,60 +23,55 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import axios from '../axios';
 import ProductCard from './ProductCard.vue';
+import router from "@/router.js";
 
-export default {
-  components: {
-    ProductCard
-  },
-  name: 'Products',
-  data() {
-    return {
-      products: [],
-      sortBy: 'name',
-    };
-  },
-  computed: {
-    sortedProducts() {
-      return [...this.products].sort((a, b) => {
-        if (this.sortBy === 'name') {
-          return a.title.localeCompare(b.title);
-        } else if (this.sortBy === 'price') {
-          return a.price - b.price;
-        }
-        return 0;
-      });
-    }
-  },
-  created() {
-    this.fetchGoods();
-  },
-  methods: {
-    async fetchGoods() {
-      try {
-        const response = await axios.get('products');
-        this.products = response.data;
-      } catch (error) {
-        console.error('Error fetching goods:', error);
-      }
-    },
-    goToProduct(id) {
-      this.$router.push(`/products/${id}`);
-    },
-    handleAddToCart(product) {
-      let cart = JSON.parse(localStorage.getItem('cart')) || {};
+const products = ref([]);
+const sortBy = ref('name');
 
-      if (cart[product.id]) {
-        cart[product.id].quantity++;
-      } else {
-        cart[product.id] = product;
-        cart[product.id].quantity = 1;
-      }
-
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
+const fetchGoods = async () => {
+  try {
+    const response = await axios.get('products');
+    products.value = response.data;
+  } catch (error) {
+    console.error('Error fetching goods:', error);
   }
 };
+
+const sortedProducts = computed(() => {
+  return [...products.value].sort((a, b) => {
+    if (sortBy.value === 'name') {
+      return a.title.localeCompare(b.title);
+    } else if (sortBy.value === 'price') {
+      return a.price - b.price;
+    }
+    return 0;
+  });
+});
+
+const goToProduct = (id) => {
+  // Assuming `router` is imported or provided globally
+  router.push(`/products/${id}`);
+};
+
+const handleAddToCart = (product) => {
+  let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+  if (cart[product.id]) {
+    cart[product.id].quantity++;
+  } else {
+    cart[product.id] = { ...product, quantity: 1 };
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+};
+
+onMounted(fetchGoods);
 </script>
+
+<style scoped>
+
+</style>

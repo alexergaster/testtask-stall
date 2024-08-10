@@ -1,8 +1,7 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4">Tовари в категорії: {{ category }}</h2>
+    <h2 class="mb-4">Товари в категорії: {{ category }}</h2>
     <div class="row">
-
       <ProductCard
           v-for="product in products"
           :key="product.id"
@@ -14,54 +13,47 @@
   </div>
 </template>
 
-<script>
-import axios from "@/axios.js";
-import ProductCard from "@/components/ProductCard.vue";
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from '@/axios.js';
+import ProductCard from '@/components/ProductCard.vue';
 
-export default {
-  components: {ProductCard},
+const products = ref([]);
+const category = ref(null);
+const route = useRoute();
+const router = useRouter();
 
-  data() {
-    return {
-      products: [],
-      category: null,
-    };
-  },
-  created() {
-    this.fetchCategory();
-  },
-  methods: {
-    async fetchCategory() {
-      const categoryId = this.$route.params.id;
-      try {
-        const response = await axios.get(`categories/${categoryId}`);
-        this.products = response.data.products;
-        this.category = response.data.name;
-      } catch (error) {
-        console.error('Error fetching goods:', error);
-      }
-    },
-    goToProduct(id) {
-      this.$router.push(`/products/${id}`);
-    },
-    handleAddToCart(product) {
-      console.log('Added to cart:', product);
-    }
+const fetchCategory = async () => {
+  const categoryId = route.params.id;
+  try {
+    const response = await axios.get(`categories/${categoryId}`);
+    products.value = response.data.products;
+    category.value = response.data.name;
+  } catch (error) {
+    console.error('Error fetching goods:', error);
   }
 };
+
+const goToProduct = (id) => {
+  router.push(`/products/${id}`);
+};
+
+const handleAddToCart = (product) => {
+  let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+  if (cart[product.id]) {
+    cart[product.id].quantity++;
+  } else {
+    cart[product.id] = { ...product, quantity: 1 };
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+};
+
+onMounted(fetchCategory);
 </script>
 
 <style scoped>
-.card-img-top {
-  height: 200px;
-  object-fit: cover;
-}
 
-.card-body {
-  text-align: center;
-}
-
-.btn {
-  width: 100%;
-}
 </style>

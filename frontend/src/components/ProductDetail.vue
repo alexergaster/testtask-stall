@@ -2,7 +2,7 @@
   <div class="container mt-5">
     <div v-if="product" class="row">
       <div class="col-md-6">
-        <img :src="`../public/${product.image}`" class="img-fluid" alt="">
+        <img :src="productImageUrl" class="img-fluid" alt="">
       </div>
       <div class="col-md-6">
         <h1>{{ product.title }}</h1>
@@ -18,47 +18,41 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import {ref, onMounted, computed} from 'vue';
+import { useRoute } from 'vue-router';
 import axios from '../axios';
-export default {
-  name: 'ProductDetail',
-  data() {
-    return {
-      product: null
-    };
-  },
-  created() {
-    this.fetchProduct();
-  },
-  methods: {
-    async fetchProduct() {
-      const productId = this.$route.params.id;
-      try {
-        const response = await axios.get(`products/${productId}`);
-        this.product = response.data
 
-      } catch (error) {
-        console.error('Error fetching goods:', error);
-      }
-    },
-    handleAddToCart() {
-      let cart = JSON.parse(localStorage.getItem('cart')) || {};
+const product = ref(null);
+const route = useRoute();
 
-      if (cart[this.product.id]) {
-        cart[this.product.id].quantity++;
-      } else {
-        cart[this.product.id] = this.product;
-        cart[this.product.id].quantity = 1;
-      }
-
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      console.log(localStorage.getItem('cart'))
-    }
+const fetchProduct = async () => {
+  const productId = route.params.id;
+  try {
+    const response = await axios.get(`products/${productId}`);
+    product.value = response.data;
+  } catch (error) {
+    console.error('Error fetching product:', error);
   }
-}
+};
+
+const handleAddToCart = () => {
+  let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+  if (cart[product.value.id]) {
+    cart[product.value.id].quantity++;
+  } else {
+    cart[product.value.id] = { ...product.value, quantity: 1 };
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+};
+
+const productImageUrl = computed(() => `../public/${product.value?.image}`);
+
+onMounted(fetchProduct);
 </script>
 
 <style scoped>
-/* Можете додати кастомні стилі для компоненту тут */
+
 </style>

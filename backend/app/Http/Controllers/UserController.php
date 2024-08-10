@@ -38,7 +38,7 @@ class UserController extends Controller
             $user->orders()->attach($product['id'], ['quantity' => $product['quantity']]);
         }
 
-        return response()->json(['Order Create'], 201);
+        return response()->json(["message" => 'Замовлення успішно оформленно'], 201);
     }
 
 }

@@ -16,30 +16,24 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import axios from "@/axios.js";
 
-export default {
+const categories = ref([]);
 
-  data() {
-    return {
-      categories: []
-    };
-  },
-  created() {
-    this.fetchCategories();
-  },
-  methods: {
-    async fetchCategories() {
-      try {
-        const response = await axios.get('categories');
-        this.categories = response.data;
-      } catch (error) {
-        console.error('Error fetching goods:', error);
-      }
-    },
+async function fetchCategories() {
+  try {
+    const response = await axios.get('categories');
+    categories.value = response.data;
+  } catch (error) {
+    console.error('Error fetching goods:', error);
   }
-};
+}
+
+onMounted(() => {
+  fetchCategories();
+});
 </script>
 
 <style scoped>
